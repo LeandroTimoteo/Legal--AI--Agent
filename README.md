@@ -63,9 +63,14 @@ Leandro Timóteo Silva — Systems Analyst
 > This interface allows users to interact with an AI-powered legal assistant.  
 > It features a clean layout, conversation history, and a prompt field for legal inquiries.
 
+---
 
----## 🔗 Access the Legal AI Agent  
+## 🔗 Access the Legal AI Agent  
 👉 [Launch the app](https://agente-ia-juridico-jtc2kzet7dikxxjvxsnhyz.streamlit.app/)
+
+
+
+
 
 
 
