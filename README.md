@@ -24,7 +24,7 @@ The project demonstrates expertise in **AI integration**, **data visualization**
 - OpenRouter  
 - Python Dotenv  
 
-
+---
 ## 📁 Project Structure
 
 Agente-IA-Juridico/ ├── .venv/ # Virtual environment (ignored by Git) ├── .env # API key and local settings ├── .gitignore # Ignored files and folders ├── requirements.txt # Project dependencies ├── streamlit_app.py # Main code of the legal agent └── README.md # Project documentation
@@ -33,10 +33,6 @@ Agente-IA-Juridico/ ├── .venv/ # Virtual environment (ignored by Git) ├�
 ## ⚙️ Local Installation and Execution
 
 Create and activate the virtual environment:
-```bash
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-Install dependencies:
 
 bash
 pip install -r requirements.txt
