@@ -44,11 +44,11 @@ This project is free to use for educational and experimental purposes. ⚠️ Th
 - 💼 **LinkedIn:** [linkedin.com/in/leandro-timóteo-ads](https://www.linkedin.com/in/leandro-timóteo-ads)  
 - 📱 **WhatsApp:** [Enviar mensagem](https://wa.me/5583987830223)  
 
-🎯 Visual Demonstration  
-
 ### 📸 Legal Agent Interface
 
-![Legal AI Agent Interface](legal-ai-agent-interface.png)
+![Legal AI Agent Interface](imagens/legal-ai-agent-interface.png)
+
+
 
 
 ## 🔗 Access the Legal AI Agent  
@@ -57,6 +57,6 @@ This project is free to use for educational and experimental purposes. ⚠️ Th
 
 
 ---
-Atualizado manualmente em 24/11/2025
+Updated on Brazil 2025
 
  
