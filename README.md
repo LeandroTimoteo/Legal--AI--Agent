@@ -6,14 +6,16 @@ The project demonstrates expertise in **AI integration**, **data visualization**
 ---
 
 ## 🚀 Key Highlights
-- 🧠 **Artificial Intelligence**: Integration with OpenAI SDK and OpenRouter for natural language processing.  
-- 📊 **Data Visualization**: Interactive charts and statistics using Pandas and Plotly.  
-- 🌐 **Web Application**: Built with Streamlit for a modern, responsive interface.  
-- 🔒 **Secure Configuration**: Environment variables managed via `.env` and Streamlit Secrets.  
+
+- 🧠 **Artificial Intelligence**: Integration with OpenAI SDK and OpenRouter for natural language processing  
+- 📊 **Data Visualization**: Interactive charts and statistics using Pandas and Plotly  
+- 🌐 **Web Application**: Built with Streamlit for a modern, responsive interface  
+- 🔒 **Secure Configuration**: Environment variables managed via `.env` and Streamlit Secrets  
 
 ---
 
 ## 🛠️ Technologies Used
+
 - Python  
 - Streamlit  
 - Pandas  
@@ -21,6 +23,7 @@ The project demonstrates expertise in **AI integration**, **data visualization**
 - OpenAI SDK  
 - OpenRouter  
 - Python Dotenv  
+
 
 ## 📁 Project Structure
 
@@ -63,7 +66,6 @@ Leandro Timóteo Silva — Systems Analyst
 > This interface allows users to interact with an AI-powered legal assistant.  
 > It features a clean layout, conversation history, and a prompt field for legal inquiries.
 
----
 
 ## 🔗 Access the Legal AI Agent  
 👉 [Launch the app](https://agente-ia-juridico-jtc2kzet7dikxxjvxsnhyz.streamlit.app/)
