@@ -49,7 +49,14 @@ This project is free to use for educational and experimental purposes. ⚠️ Th
 
 👉 [Launch the app](https://agente-ia-juridico-jtc2kzet7dikxxjvxsnhyz.streamlit.app/)
 
-![Legal AI Agent Interface](imagens/legal-ai-agent-interface.png)
+
+![Legal AI Agent Interface](legal-ai-agent-interface.png)
+
+
+
+
+
+
 
 
 
