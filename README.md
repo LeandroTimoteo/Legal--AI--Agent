@@ -44,16 +44,14 @@ This project is free to use for educational and experimental purposes. ⚠️ Th
 - 💼 **LinkedIn:** [linkedin.com/in/leandro-timóteo-ads](https://www.linkedin.com/in/leandro-timóteo-ads)  
 - 📱 **WhatsApp:** [Enviar mensagem](https://wa.me/5583987830223)  
 
-### 📸 Legal Agent Interface
-
-![Legal AI Agent Interface](imagens/legal-ai-agent-interface.png)
 
 ## 🔗 Access the Legal AI Agent  
 
 👉 [Launch the app](https://agente-ia-juridico-jtc2kzet7dikxxjvxsnhyz.streamlit.app/)
 
 
----
-Updated on Brazil 2025
+![Legal AI Agent Interface](imagens/legal-ai-agent-interface.png)
+
+
 
  
