@@ -88,6 +88,6 @@ if prompt := st.chat_input("How can I assist with your legal inquiry?"):
 
     st.session_state.messages.append({"role": "assistant", "content": full_response})
     
-
+#Tudo OK
 
 
