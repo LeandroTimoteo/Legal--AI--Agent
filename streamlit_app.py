@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import traceback
 
-# 🔧 Load local environment variables
+# 🔧 Load local environment variables (apenas quando rodar localmente)
 load_dotenv()
 
 # ⚙️ Page configuration
@@ -15,17 +15,16 @@ st.title("⚖️ Legal AI Agent")
 api_key = (
     st.secrets.get("OPENROUTER_API_KEY")
     or os.getenv("OPENROUTER_API_KEY")
-    or os.getenv("OPENAI_API_KEY")
 )
 chosen_model = (
     st.secrets.get("DEFAULT_MODEL")
-    or os.getenv("DEFAULT_MODEL", "tngtech/deepseek-r1t2-chimera:free")
+    or os.getenv("DEFAULT_MODEL", "nvidia/nemotron-3-nano-30b-a3b:free")
 )
 admin_mode = st.secrets.get("ADMIN_MODE") or os.getenv("ADMIN_MODE", "false")
 
 # 🚨 Validate API key
 if not api_key:
-    st.error("❌ No API key found. Please configure OPENROUTER_API_KEY or OPENAI_API_KEY.")
+    st.error("❌ No API key found. Please configure OPENROUTER_API_KEY.")
     st.stop()
 
 # 🤖 OpenRouter client
@@ -87,7 +86,7 @@ if prompt := st.chat_input("How can I assist with your legal inquiry?"):
             message_placeholder.markdown(full_response)
 
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+
     
-#Tudo OK
 
 
