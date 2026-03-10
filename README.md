@@ -44,10 +44,9 @@ This project is free to use for educational and experimental purposes. ⚠️ Th
 - 💼 **LinkedIn:** [linkedin.com/in/leandro-timóteo-ads](https://www.linkedin.com/in/leandro-timóteo-ads)  
 - 📱 **WhatsApp:** [Enviar mensagem](https://wa.me/5583987830223)  
 
-
-## 🔗 Access the Legal AI Agent  
-
-👉 [Launch the app](https://agente-ia-juridico-jtc2kzet7dikxxjvxsnhyz.streamlit.app/)
+# 🔗 Access the Legal AI Agent  
+## 🚀 Project Demo  
+Click here to access: [Legal AI Agent](https://legalagent.streamlit.app)
 
 ![Legal AI Agent Interface](imagens/legal-ai-agent-interface.png)
 
