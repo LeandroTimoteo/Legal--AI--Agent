@@ -14,7 +14,7 @@
   "sys_status_online": "Online",
   "clear_btn": "🧹 Clear History",
   "page_title": "⚖️ Legal AI Agent",
-  "page_desc": "Consult our smart legal assistant by typing your question or using the <b>voice control</b> in the sidebar.",
+  "page_desc": "Consult our smart legal assistant by typing your question.",
   "input_placeholder": "Type your legal query...",
   "spinner_msg": "🔎 Analyzing legal query...",
   "error_msg": "⚠️ Error processing response: ",

@@ -1,31 +1,27 @@
-# Ignorar ambiente virtual
+# Virtual environments
 .venv/
 venv/
 
-# Ignorar arquivos temporários
+# Temporary files and logs
 .tmp.driveupload/
 *.tmp
+*.log
 
-# Ignorar cache do Python
+# Python caches and test artifacts
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.coverage
 
-# Ignorar logs
-*.log
-
-# Ignorar configurações locais
+# Local configuration and credentials
 .env
 .env.*
+!.env.example
+.streamlit/secrets.toml
 
-# Ignorar diretórios de IDE/ferramentas
+# IDE and tool state
 .refact/
 .qodo/
 .antigravitycli/
 .vscode/
-
-# Ignorar caches de teste
-.pytest_cache/
-
-# Ignorar secrets do Streamlit Cloud local
-.streamlit/secrets.toml

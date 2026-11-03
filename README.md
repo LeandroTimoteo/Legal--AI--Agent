@@ -1,7 +1,7 @@
 # ⚖️ Legal AI Agent
 
 An intelligent legal assistant built with **Python** and **Streamlit**, featuring AI-powered consultation, document drafting, and jurisprudence research.  
-Integrated with **OpenRouter API** for natural language processing.
+Integrated with **Groq** for natural language processing, with Ollama Cloud and Hugging Face as optional fallbacks.
 
 ---
 
@@ -9,8 +9,9 @@ Integrated with **OpenRouter API** for natural language processing.
 
 - **💬 Legal Chat** — Ask legal questions and get AI-driven responses with automatic case classification (labor, civil, criminal)
 - **📜 Document Generator** — Draft formal contracts, powers of attorney, extrajudicial notices, and simplified petitions
-- **🛡️ Jurisprudence Research** — Describe your case and receive structured precedent analysis with applicability estimates
-- **🌐 Multilingual** — Portuguese, English, and French interface with full translation support
+- **🛡️ Jurisprudence Analysis** — Receive AI-generated analysis of potentially relevant legal theses; it does not query official court databases, and cited authorities must be independently verified
+- **🌐 Multilingual** — Navigation and chat are available in Portuguese, English, and French; document and jurisprudence pages are currently in Portuguese
+- **📄 Document Export** — Download generated drafts as TXT, PDF, or DOCX
 - **🎨 Premium UI** — Glassmorphism design, SVG logo, dark theme, and responsive layout
 
 ---
@@ -21,7 +22,7 @@ Integrated with **OpenRouter API** for natural language processing.
 |----------------|----------------------------------|
 | Python         | Core language                    |
 | Streamlit      | Web framework & UI               |
-| OpenAI SDK     | OpenRouter API integration       |
+| OpenAI SDK     | Groq, Ollama Cloud, and Hugging Face APIs |
 | Pandas         | Data handling                    |
 | Plotly         | Charts & analytics               |
 | python-dotenv  | Environment variable management  |
@@ -46,7 +47,6 @@ Agente-IA-Juridico/
 │   └── test_classificacao.py  # Unit tests
 ├── .github/workflows/      # CI pipeline
 ├── requirements.txt        # Python dependencies
-├── environment.yml         # Conda environment
 ├── .env.example            # Reference for local config
 ├── .gitattributes          # Line ending normalization
 └── README.md               # This file
@@ -66,7 +66,7 @@ pip install -r requirements.txt
 
 # 3. Configure your API key
 cp .env.example .env
-# Edit .env and add your OpenRouter API key
+# Edit .env and add a Groq API key from https://console.groq.com/keys
 
 # 4. Run the application
 streamlit run streamlit_app.py
@@ -80,8 +80,10 @@ Set the following environment variables in `.env` or Streamlit Cloud Secrets:
 
 | Variable               | Description                     | Required |
 |------------------------|---------------------------------|----------|
-| `OPENROUTER_API_KEY`   | API key for OpenRouter          | Yes      |
-| `DEFAULT_MODEL`        | Model identifier (optional)     | No       |
+| `GROQ_API_KEY`         | Groq API key | Yes |
+| `GROQ_MODEL`           | Groq model (defaults to `openai/gpt-oss-120b`) | No |
+
+The app connects directly to Groq's OpenAI-compatible API. If `GROQ_API_KEY` is not configured, it falls back to Ollama Cloud (`OLLAMA_API_KEY`, default model `deepseek-v4.1-flash`), then Hugging Face (`HF_TOKEN`). Configure the same variable names in Streamlit Cloud Secrets when deploying. Prompts are sent to the selected provider for processing.
 
 ---
 

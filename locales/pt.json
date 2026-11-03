@@ -14,7 +14,7 @@
   "sys_status_online": "Online",
   "clear_btn": "🧹 Limpar Histórico",
   "page_title": "⚖️ Legal AI Agent",
-  "page_desc": "Consulte nosso assistente jurídico inteligente digitando sua dúvida ou utilizando o <b>controle por voz</b> na barra lateral.",
+  "page_desc": "Consulte nosso assistente jurídico inteligente digitando sua dúvida.",
   "input_placeholder": "Digite sua consulta jurídica...",
   "spinner_msg": "🔎 Analisando consulta jurídica...",
   "error_msg": "⚠️ Erro ao processar resposta: ",

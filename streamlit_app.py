@@ -6,6 +6,8 @@ import traceback
 import json
 import importlib
 from dotenv import load_dotenv
+from fpdf import FPDF
+from docx import Document
 
 _REQUIRED = {"openai": "openai>=1.3"}
 _missing = []
@@ -60,15 +62,47 @@ if "messages" not in st.session_state:
 if "current_page" not in st.session_state:
     st.session_state.current_page = "chat"
 
-# 🔑 Chaves e modelo
-api_key = os.getenv("OPENROUTER_API_KEY") or st.secrets.get("OPENROUTER_API_KEY")
-chosen_model = os.getenv("DEFAULT_MODEL") or st.secrets.get("DEFAULT_MODEL") or "nvidia/nemotron-3-nano-30b-a3b:free"
-has_api_key = bool(api_key)
+# 🔑 Provedor e modelo (Groq tem prioridade, seguido por Ollama Cloud e Hugging Face)
+groq_api_key = os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY")
+ollama_api_key = os.getenv("OLLAMA_API_KEY") or st.secrets.get("OLLAMA_API_KEY")
+hf_token = os.getenv("HF_TOKEN") or st.secrets.get("HF_TOKEN")
 
-# 🤖 Cliente OpenRouter
-client = None
-if has_api_key:
-    client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
+if groq_api_key:
+    provider_name = "Groq"
+    chosen_model = os.getenv("GROQ_MODEL") or st.secrets.get("GROQ_MODEL") or "openai/gpt-oss-120b"
+    client = OpenAI(api_key=groq_api_key, base_url="https://api.groq.com/openai/v1")
+elif ollama_api_key:
+    provider_name = "Ollama Cloud"
+    chosen_model = os.getenv("OLLAMA_MODEL") or st.secrets.get("OLLAMA_MODEL") or "deepseek-v4.1-flash"
+    client = OpenAI(api_key=ollama_api_key, base_url="https://ollama.com/v1")
+elif hf_token:
+    provider_name = "Hugging Face"
+    chosen_model = os.getenv("DEFAULT_MODEL") or st.secrets.get("DEFAULT_MODEL") or "openai/gpt-oss-120b:fastest"
+    client = OpenAI(api_key=hf_token, base_url="https://router.huggingface.co/v1")
+else:
+    provider_name = "Ollama Cloud"
+    chosen_model = os.getenv("OLLAMA_MODEL") or st.secrets.get("OLLAMA_MODEL") or "deepseek-v4.1-flash"
+    client = None
+
+has_api_key = client is not None
+
+
+def show_api_error(context, error):
+    status_code = getattr(error, "status_code", None)
+    if status_code == 402:
+        details = f"{provider_name} informou que há uma exigência de créditos ou faturamento para este modelo."
+    elif status_code in (401, 403):
+        credential = {
+            "Groq": "GROQ_API_KEY",
+            "Ollama Cloud": "OLLAMA_API_KEY",
+            "Hugging Face": "HF_TOKEN",
+        }[provider_name]
+        details = f"Verifique se {credential} está válido e tem acesso ao serviço."
+    elif status_code == 404:
+        details = f"O modelo '{chosen_model}' não foi encontrado ou não está disponível para sua conta."
+    else:
+        details = str(error)
+    st.error(f"{context}: {details}")
 
 
 
@@ -175,7 +209,7 @@ with st.sidebar:
     
     # Status e Ações
     st.markdown(f"<p style='font-size:0.75rem; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;'>{t['sys_header']}</p>", unsafe_allow_html=True)
-    st.caption(f"{t['sys_model']} \n`{chosen_model.split('/')[-1]}`")
+    st.caption(f"{provider_name} · {t['sys_model']} \n`{chosen_model.split('/')[-1]}`")
     
     pulse_color = "#10B981" if has_api_key else "#EF4444"
     status_label = t['sys_status_online'] if has_api_key else 'Aguardando Chave'
@@ -274,7 +308,7 @@ def render_chat_page(t):
                     message_placeholder.markdown(full_response)
 
             except Exception as e:
-                st.error(f"{t['error_msg']}{e}")
+                show_api_error(t["error_msg"], e)
                 full_response = t["error_generic"]
                 message_placeholder.markdown(full_response)
 
@@ -337,7 +371,7 @@ def render_docs_page(t):
                     doc_content = response.choices[0].message.content
                     st.session_state.last_generated_doc = doc_content
                 except Exception as e:
-                    st.error(f"Erro ao gerar o documento: {e}")
+                    show_api_error("Erro ao gerar o documento", e)
 
     if "last_generated_doc" in st.session_state:
         st.divider()
@@ -348,19 +382,54 @@ def render_docs_page(t):
         </div>
         """, unsafe_allow_html=True)
 
-        col_btn1, col_btn2 = st.columns(2)
+        col_btn1, col_btn2, col_btn3 = st.columns(3)
         with col_btn1:
             st.download_button(
-                label="📥 Baixar Minuta (.txt)",
+                label="📥 Baixar .txt",
                 data=st.session_state.last_generated_doc,
                 file_name=f"minuta_{doc_type.lower().replace(' ', '_')}.txt",
                 mime="text/plain",
                 use_container_width=True
             )
         with col_btn2:
-            if st.button("🧹 Limpar Documento", use_container_width=True):
-                del st.session_state.last_generated_doc
-                st.rerun()
+            # Geração de PDF
+            def create_pdf(text):
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Helvetica", size=12)
+                # Substituir caracteres não suportados pelo FPDF básico
+                clean_text = text.encode('latin-1', 'replace').decode('latin-1')
+                pdf.multi_cell(0, 10, text=clean_text)
+                return bytes(pdf.output())
+
+            st.download_button(
+                label="📄 Baixar .pdf",
+                data=create_pdf(st.session_state.last_generated_doc),
+                file_name=f"minuta_{doc_type.lower().replace(' ', '_')}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+        with col_btn3:
+            # Geração de DOCX
+            def create_docx(text):
+                doc = Document()
+                doc.add_paragraph(text)
+                buffer = io.BytesIO()
+                doc.save(buffer)
+                return buffer.getvalue()
+
+            st.download_button(
+                label="📝 Baixar .docx",
+                data=create_docx(st.session_state.last_generated_doc),
+                file_name=f"minuta_{doc_type.lower().replace(' ', '_')}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                use_container_width=True
+            )
+
+        st.write("")
+        if st.button("🧹 Limpar Documento", use_container_width=True):
+            del st.session_state.last_generated_doc
+            st.rerun()
 
 
 def render_juris_page(t):
@@ -368,7 +437,7 @@ def render_juris_page(t):
     <div style="background-color: rgba(23, 42, 69, 0.75); backdrop-filter: blur(8px); padding: 25px; border-radius: 12px; border: 1px solid rgba(74, 144, 226, 0.25); margin-bottom: 25px; box-shadow: 0 8px 16px -1px rgba(0, 0, 0, 0.25);">
         <h1 style="margin:0; font-size:2.2rem; color:#E6F1FF !important; text-shadow: 0 0 15px rgba(74,144,226,0.1);">🛡️ Consulta de Jurisprudência & Precedentes</h1>
         <p style="margin:5px 0 0 0; color:#8892B0; font-size:1.05rem;">
-            Descreva seu caso de forma clara e objetiva para que nossa IA pesquise, liste e analise a aplicabilidade de precedentes consolidados nos Tribunais Superiores (STJ/STF).
+            Descreva seu caso para receber uma análise de possíveis teses e linhas jurisprudenciais. A ferramenta não consulta bases oficiais; confirme qualquer precedente em fonte confiável.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -382,12 +451,12 @@ def render_juris_page(t):
         if not caso_fatico:
             st.warning("⚠️ Insira a descrição dos fatos para realizarmos a pesquisa jurisprudencial.")
         else:
-            with st.spinner("🔎 Consultando repositórios e interpretando precedentes jurisprudenciais..."):
+            with st.spinner("🔎 Analisando possíveis teses jurídicas..."):
                 prompt = (
-                    f"Aja como um analista de jurisprudência especializado. Com base na situação fática descrita abaixo, forneça 2 precedentes históricos "
-                    f"ou representativos relevantes dos tribunais brasileiros (simule o padrão STJ/STF com números de REsp/RE, ementas resumidas e teses consagradas). "
-                    f"Para cada precedente, forneça a identificação formal do julgado, a tese central, o nível estimado de aplicabilidade ao caso em percentual "
-                    f"e uma análise fundamentada de aplicabilidade prática.\n\n"
+                    f"Aja como um analista jurídico especializado. Com base na situação fática abaixo, identifique possíveis teses jurídicas "
+                    f"e linhas jurisprudenciais relevantes no direito brasileiro, com uma análise estimada de aplicabilidade. "
+                    f"Não invente números de processos, ementas, datas ou decisões; não afirme ter consultado tribunais. "
+                    f"Se não puder identificar um precedente com segurança, descreva apenas a tese e recomende pesquisa em fonte oficial.\n\n"
                     f"Situação Fática: {caso_fatico}\n\n"
                     f"Formate o resultado de maneira muito estruturada e profissional utilizando Markdown."
                 )
@@ -395,7 +464,7 @@ def render_juris_page(t):
                     response = client.chat.completions.create(
                         model=chosen_model,
                         messages=[
-                            {"role": "system", "content": "Você é um especialista em busca e análise jurisprudencial do direito brasileiro. Apresente precedentes formais estruturados com ementas, tese jurídica e probabilidade de êxito/aplicação fática."},
+                            {"role": "system", "content": "Você é um assistente de análise jurídica brasileira. Nunca invente precedentes, números de processos ou ementas. Deixe claro que sua análise não substitui consulta a bases oficiais nem aconselhamento de advogado."},
                             {"role": "user", "content": prompt}
                         ],
                         stream=False
@@ -403,7 +472,7 @@ def render_juris_page(t):
                     juris_result = response.choices[0].message.content
                     st.session_state.last_juris_search = juris_result
                 except Exception as e:
-                    st.error(f"Erro ao pesquisar precedentes: {e}")
+                    show_api_error("Erro ao analisar precedentes", e)
 
     if "last_juris_search" in st.session_state:
         st.divider()
@@ -420,7 +489,7 @@ if not has_api_key:
     <div style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.35); padding: 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.05); backdrop-filter: blur(8px);">
         <h3 style="margin:0; font-size:1.4rem; color:#EF4444 !important; font-family:'Outfit',sans-serif;">🔑 Chave de API Requerida</h3>
         <p style="margin:10px 0 0 0; color:#8892B0; font-size:1rem; line-height:1.5;">
-            Para habilitar as consultas inteligentes e a geração de minutas do <b>Legal AI Agent</b>, configure uma chave de API válida do OpenRouter no menu lateral esquerdo na aba retrátil <b>"🔑 Chave de API Personalizada"</b>.
+            Para habilitar as consultas inteligentes e a geração de minutas do <b>Legal AI Agent</b>, configure <code>GROQ_API_KEY</code>, <code>OLLAMA_API_KEY</code> ou <code>HF_TOKEN</code> em <code>.env</code> ou nos segredos do Streamlit.
         </p>
     </div>
     """, unsafe_allow_html=True)

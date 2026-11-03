@@ -5,3 +5,5 @@ pandas
 requests
 plotly
 pytest
+fpdf2
+python-docx
